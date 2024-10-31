@@ -299,9 +299,12 @@ mainOpts options dir testSuite = do
   (good, bad, badRuntime) <- runTests dir testSuite
   putStrLn ""
   putStrLn "------------------------------------------------------------"
-  report "Good programs: " good
-  report "Bad programs: " bad
-  report "Bad runtime programs: " badRuntime
+  ok <- and <$> sequence
+    [ report "Good programs: " good
+    , report "Bad programs: " bad
+    , report "Bad runtime programs: " badRuntime
+    ]
+  if ok then exitSuccess else exitFailure
 
 --
 -- * Utilities
@@ -460,7 +463,8 @@ prFile f = do
     putStrLn $ "----------------- end " ++ f ++ " -------------------"
 
 -- | Report how many tests passed and which tests failed (if any).
-report :: String -> [(FilePath,Bool)] -> IO ()
+--   Return 'True' if all tests passed.
+report :: String -> [(FilePath,Bool)] -> IO Bool
 report n rs = do
   let (passedTests,failedTests) = partition snd rs
       (p,t) = (length passedTests, length rs)
@@ -471,6 +475,7 @@ report n rs = do
   when (not successful) $ do
     putStrLn $ show (t - p) ++ " tests failed:"
     forM_ failedTests $ \(fp,_) -> putStrLn $ "- " ++ fp
+  return successful
 
 -- Inlined from https://hackage.haskell.org/package/pretty-terminal-0.1.0.0/docs/src/System-Console-Pretty.html#supportsPretty :
 
