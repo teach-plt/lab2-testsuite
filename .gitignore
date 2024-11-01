@@ -4,3 +4,4 @@ dist-newstyle/
 stack*.yaml.lock
 *.class
 *.j
+/lab-solutions-andreas
