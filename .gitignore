@@ -2,3 +2,5 @@
 dist-newstyle/
 /lab2-testsuite.tar.gz
 stack*.yaml.lock
+*.class
+*.j
